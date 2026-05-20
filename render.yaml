@@ -4,14 +4,6 @@ databases:
 
 services:
   # ----------------------------------------------------
-  # 0. Redis Cache (Valkey)
-  # ----------------------------------------------------
-  - type: keyvalue
-    name: aura-redis
-    plan: free
-    ipAllowList: [] # restrict access only to services in this Render account
-
-  # ----------------------------------------------------
   # 1. Discovery Server (Eureka)
   # ----------------------------------------------------
   - type: web
@@ -39,15 +31,11 @@ services:
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
         value: https://aura-discovery-server.onrender.com/eureka/
       - key: SPRING_DATA_REDIS_HOST
-        fromService:
-          type: keyvalue
-          name: aura-redis
-          property: host
+        sync: false # Prompts user for Upstash Redis host
       - key: SPRING_DATA_REDIS_PORT
-        fromService:
-          type: keyvalue
-          name: aura-redis
-          property: port
+        sync: false # Prompts user for Upstash Redis port
+      - key: SPRING_DATA_REDIS_PASSWORD
+        sync: false # Prompts user for Upstash Redis password
 
   # ----------------------------------------------------
   # 3. Auth Service
@@ -86,15 +74,11 @@ services:
           name: aura-db
           property: password
       - key: SPRING_DATA_REDIS_HOST
-        fromService:
-          type: keyvalue
-          name: aura-redis
-          property: host
+        sync: false
       - key: SPRING_DATA_REDIS_PORT
-        fromService:
-          type: keyvalue
-          name: aura-redis
-          property: port
+        sync: false
+      - key: SPRING_DATA_REDIS_PASSWORD
+        sync: false
       - key: SPRING_KAFKA_BOOTSTRAP_SERVERS
         sync: false # Prompts user for Upstash/Cloud Kafka bootstrap servers
       - key: JWT_SECRET
@@ -137,15 +121,11 @@ services:
           name: aura-db
           property: password
       - key: SPRING_DATA_REDIS_HOST
-        fromService:
-          type: keyvalue
-          name: aura-redis
-          property: host
+        sync: false
       - key: SPRING_DATA_REDIS_PORT
-        fromService:
-          type: keyvalue
-          name: aura-redis
-          property: port
+        sync: false
+      - key: SPRING_DATA_REDIS_PASSWORD
+        sync: false
       - key: SPRING_ELASTICSEARCH_URIS
         sync: false # Prompts user for Bonsai/Elasticsearch cloud URL
 
@@ -186,15 +166,11 @@ services:
           name: aura-db
           property: password
       - key: SPRING_DATA_REDIS_HOST
-        fromService:
-          type: keyvalue
-          name: aura-redis
-          property: host
+        sync: false
       - key: SPRING_DATA_REDIS_PORT
-        fromService:
-          type: keyvalue
-          name: aura-redis
-          property: port
+        sync: false
+      - key: SPRING_DATA_REDIS_PASSWORD
+        sync: false
       - key: SPRING_KAFKA_BOOTSTRAP_SERVERS
         sync: false # Prompts user for Kafka bootstrap servers
 
