@@ -45,7 +45,8 @@ public class OrderService {
         for (OrderItemRequest item : request.getItems()) {
             // Synchronous check & stock deduction from product-service
             try {
-                String productServiceUrl = "http://localhost:8082/api/products/" + item.getProductId();
+                String productBaseUrl = System.getenv().getOrDefault("PRODUCT_SERVICE_URL", "http://localhost:8082");
+                String productServiceUrl = productBaseUrl + "/api/products/" + item.getProductId();
                 // Load details
                 Map<?, ?> prodMap = restTemplate.getForObject(productServiceUrl, Map.class);
                 if (prodMap == null) throw new RuntimeException("Target product not found in catalog.");

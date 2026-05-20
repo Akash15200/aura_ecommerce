@@ -182,7 +182,8 @@ public class RecommendationService {
     // Resilient catalog loading: retrieves from REST endpoints with instant mock fallback
     private List<Map<String, Object>> loadCatalogResiliently() {
         try {
-            String productUrl = "http://localhost:8082/api/products";
+            String productBaseUrl = System.getenv().getOrDefault("PRODUCT_SERVICE_URL", "http://localhost:8082");
+            String productUrl = productBaseUrl + "/api/products";
             Map<?, ?> page = restTemplate.getForObject(productUrl, Map.class);
             if (page != null && page.containsKey("content")) {
                 return (List<Map<String, Object>>) page.get("content");

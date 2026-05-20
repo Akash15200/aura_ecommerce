@@ -29,13 +29,25 @@ services:
       - key: PORT
         value: 8080
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
-        sync: false # Prompts user for public Eureka URL: https://aura-discovery-server-tubk.onrender.com/eureka/
+        sync: false
       - key: SPRING_DATA_REDIS_HOST
         sync: false
       - key: SPRING_DATA_REDIS_PORT
         sync: false
       - key: SPRING_DATA_REDIS_PASSWORD
         sync: false
+      - key: AUTH_SERVICE_URL
+        sync: false # e.g. https://aura-auth-service-tubk.onrender.com
+      - key: PRODUCT_SERVICE_URL
+        sync: false # e.g. https://aura-product-service-tubk.onrender.com
+      - key: ORDER_SERVICE_URL
+        sync: false # e.g. https://aura-order-service-tubk.onrender.com
+      - key: REVIEW_SERVICE_URL
+        sync: false # e.g. https://aura-review-service-tubk.onrender.com
+      - key: RECOMMENDATION_SERVICE_URL
+        sync: false # e.g. https://aura-recommendation-service-tubk.onrender.com
+      - key: ANALYTICS_SERVICE_URL
+        sync: false # e.g. https://aura-analytics-service-tubk.onrender.com
 
   # ----------------------------------------------------
   # 3. Auth Service
@@ -173,6 +185,8 @@ services:
         sync: false
       - key: SPRING_KAFKA_BOOTSTRAP_SERVERS
         sync: false
+      - key: PRODUCT_SERVICE_URL
+        sync: false # e.g. https://aura-product-service-tubk.onrender.com
 
   # ----------------------------------------------------
   # 6. Review Service
@@ -211,6 +225,8 @@ services:
         sync: false
       - key: SPRING_DATA_MONGODB_URI
         sync: false
+      - key: PRODUCT_SERVICE_URL
+        sync: false # e.g. https://aura-product-service-tubk.onrender.com
 
   # ----------------------------------------------------
   # 8. Analytics Service

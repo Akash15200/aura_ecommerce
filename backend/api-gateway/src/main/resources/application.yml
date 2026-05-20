@@ -32,7 +32,7 @@ spring:
       routes:
         # 1. Auth Service Routes
         - id: auth-service
-          uri: lb://auth-service
+          uri: ${AUTH_SERVICE_URL:lb://auth-service}
           predicates:
             - Path=/api/auth/**, /api/users/**
           filters:
@@ -44,7 +44,7 @@ spring:
 
         # 2. Product Service Routes
         - id: product-service
-          uri: lb://product-service
+          uri: ${PRODUCT_SERVICE_URL:lb://product-service}
           predicates:
             - Path=/api/products/**, /api/categories/**, /api/ai/**
           filters:
@@ -55,7 +55,7 @@ spring:
 
         # 3. Order Service Routes
         - id: order-service
-          uri: lb://order-service
+          uri: ${ORDER_SERVICE_URL:lb://order-service}
           predicates:
             - Path=/api/orders/**, /api/cart/**, /api/coupons/**
           filters:
@@ -66,35 +66,35 @@ spring:
 
         # 4. Payment Service Routes
         - id: payment-service
-          uri: lb://payment-service
+          uri: ${PAYMENT_SERVICE_URL:lb://payment-service}
           predicates:
             - Path=/api/payments/**
 
         # 5. Review Service Routes
         - id: review-service
-          uri: lb://review-service
+          uri: ${REVIEW_SERVICE_URL:lb://review-service}
           predicates:
             - Path=/api/reviews/**
 
         # 6. Recommendation Service Routes
         - id: recommendation-service
-          uri: lb://recommendation-service
+          uri: ${RECOMMENDATION_SERVICE_URL:lb://recommendation-service}
           predicates:
             - Path=/api/recommendations/**
 
         # 7. Notification Service Routes (WebSocket support mapped directly)
         - id: notification-service-ws
-          uri: lb:ws://notification-service
+          uri: ${NOTIFICATION_SERVICE_WS_URL:lb:ws://notification-service}
           predicates:
             - Path=/ws/**
         - id: notification-service
-          uri: lb://notification-service
+          uri: ${NOTIFICATION_SERVICE_URL:lb://notification-service}
           predicates:
             - Path=/api/notifications/**
 
         # 8. Analytics Service Routes
         - id: analytics-service
-          uri: lb://analytics-service
+          uri: ${ANALYTICS_SERVICE_URL:lb://analytics-service}
           predicates:
             - Path=/api/admin/analytics/**, /api/admin/forecast/**
 
