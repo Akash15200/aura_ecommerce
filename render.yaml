@@ -1,0 +1,198 @@
+databases:
+  - name: aura-db
+    plan: free
+
+redis:
+  - name: aura-redis
+    plan: free
+    ipAllowList: [] # restict access only to services in this Render account
+
+services:
+  # ----------------------------------------------------
+  # 1. Discovery Server (Eureka)
+  # ----------------------------------------------------
+  - type: web
+    name: aura-discovery-server
+    runtime: java
+    plan: free
+    buildCommand: mvn clean package -DskipTests
+    startCommand: java -XX:TieredStopAtLevel=1 -Xmx384m -Xms64m -jar backend/discovery-server/target/discovery-server-0.0.1-SNAPSHOT.jar
+    envVars:
+      - key: JAVA_OPTS
+        value: -XX:TieredStopAtLevel=1 -Xmx384m -Xms64m
+      - key: PORT
+        value: 8761
+
+  # ----------------------------------------------------
+  # 2. API Gateway
+  # ----------------------------------------------------
+  - type: web
+    name: aura-api-gateway
+    runtime: java
+    plan: free
+    buildCommand: mvn clean package -DskipTests
+    startCommand: java -XX:TieredStopAtLevel=1 -Xmx384m -Xms64m -jar backend/api-gateway/target/api-gateway-0.0.1-SNAPSHOT.jar
+    envVars:
+      - key: JAVA_OPTS
+        value: -XX:TieredStopAtLevel=1 -Xmx384m -Xms64m
+      - key: PORT
+        value: 8080
+      - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+        value: https://aura-discovery-server.onrender.com/eureka/
+      - key: SPRING_DATA_REDIS_HOST
+        fromRedis:
+          name: aura-redis
+          property: host
+      - key: SPRING_DATA_REDIS_PORT
+        fromRedis:
+          name: aura-redis
+          property: port
+
+  # ----------------------------------------------------
+  # 3. Auth Service
+  # ----------------------------------------------------
+  - type: web
+    name: aura-auth-service
+    runtime: java
+    plan: free
+    buildCommand: mvn clean package -DskipTests
+    startCommand: java -XX:TieredStopAtLevel=1 -Xmx384m -Xms64m -jar backend/auth-service/target/auth-service-0.0.1-SNAPSHOT.jar
+    envVars:
+      - key: JAVA_OPTS
+        value: -XX:TieredStopAtLevel=1 -Xmx384m -Xms64m
+      - key: PORT
+        value: 8081
+      - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+        value: https://aura-discovery-server.onrender.com/eureka/
+      - key: DATABASE_HOST
+        fromDatabase:
+          name: aura-db
+          property: host
+      - key: DATABASE_PORT
+        fromDatabase:
+          name: aura-db
+          property: port
+      - key: DATABASE_DB
+        fromDatabase:
+          name: aura-db
+          property: database
+      - key: SPRING_DATASOURCE_URL
+        value: jdbc:postgresql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_DB}?sslmode=require
+      - key: SPRING_DATASOURCE_USERNAME
+        fromDatabase:
+          name: aura-db
+          property: user
+      - key: SPRING_DATASOURCE_PASSWORD
+        fromDatabase:
+          name: aura-db
+          property: password
+      - key: SPRING_DATA_REDIS_HOST
+        fromRedis:
+          name: aura-redis
+          property: host
+      - key: SPRING_DATA_REDIS_PORT
+        fromRedis:
+          name: aura-redis
+          property: port
+      - key: SPRING_KAFKA_BOOTSTRAP_SERVERS
+        sync: false # Prompts user for Upstash/Cloud Kafka bootstrap servers
+      - key: JWT_SECRET
+        value: YXVyYV9zdXBlcl9zZWN1cmVfc2VjcmV0X2tleV90aGF0X2lzX2xvbmdfZW5vdWdoX2Zvcl9zaGEyNTY=
+
+  # ----------------------------------------------------
+  # 4. Product Service
+  # ----------------------------------------------------
+  - type: web
+    name: aura-product-service
+    runtime: java
+    plan: free
+    buildCommand: mvn clean package -DskipTests
+    startCommand: java -XX:TieredStopAtLevel=1 -Xmx384m -Xms64m -jar backend/product-service/target/product-service-0.0.1-SNAPSHOT.jar
+    envVars:
+      - key: JAVA_OPTS
+        value: -XX:TieredStopAtLevel=1 -Xmx384m -Xms64m
+      - key: PORT
+        value: 8082
+      - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+        value: https://aura-discovery-server.onrender.com/eureka/
+      - key: DATABASE_HOST
+        fromDatabase:
+          name: aura-db
+          property: host
+      - key: DATABASE_PORT
+        fromDatabase:
+          name: aura-db
+          property: port
+      - key: DATABASE_DB
+        fromDatabase:
+          name: aura-db
+          property: database
+      - key: SPRING_DATASOURCE_URL
+        value: jdbc:postgresql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_DB}?sslmode=require
+      - key: SPRING_DATASOURCE_USERNAME
+        fromDatabase:
+          name: aura-db
+          property: user
+      - key: SPRING_DATASOURCE_PASSWORD
+        fromDatabase:
+          name: aura-db
+          property: password
+      - key: SPRING_DATA_REDIS_HOST
+        fromRedis:
+          name: aura-redis
+          property: host
+      - key: SPRING_DATA_REDIS_PORT
+        fromRedis:
+          name: aura-redis
+          property: port
+      - key: SPRING_ELASTICSEARCH_URIS
+        sync: false # Prompts user for Bonsai/Elasticsearch cloud URL
+
+  # ----------------------------------------------------
+  # 5. Order Service
+  # ----------------------------------------------------
+  - type: web
+    name: aura-order-service
+    runtime: java
+    plan: free
+    buildCommand: mvn clean package -DskipTests
+    startCommand: java -XX:TieredStopAtLevel=1 -Xmx384m -Xms64m -jar backend/order-service/target/order-service-0.0.1-SNAPSHOT.jar
+    envVars:
+      - key: JAVA_OPTS
+        value: -XX:TieredStopAtLevel=1 -Xmx384m -Xms64m
+      - key: PORT
+        value: 8083
+      - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+        value: https://aura-discovery-server.onrender.com/eureka/
+      - key: DATABASE_HOST
+        fromDatabase:
+          name: aura-db
+          property: host
+      - key: DATABASE_PORT
+        fromDatabase:
+          name: aura-db
+          property: port
+      - key: DATABASE_DB
+        fromDatabase:
+          name: aura-db
+          property: database
+      - key: SPRING_DATASOURCE_URL
+        value: jdbc:postgresql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_DB}?sslmode=require
+      - key: SPRING_DATASOURCE_USERNAME
+        fromDatabase:
+          name: aura-db
+          property: user
+      - key: SPRING_DATASOURCE_PASSWORD
+        fromDatabase:
+          name: aura-db
+          property: password
+      - key: SPRING_DATA_REDIS_HOST
+        fromRedis:
+          name: aura-redis
+          property: host
+      - key: SPRING_DATA_REDIS_PORT
+        fromRedis:
+          name: aura-redis
+          property: port
+      - key: SPRING_KAFKA_BOOTSTRAP_SERVERS
+        sync: false # Prompts user for Kafka bootstrap servers
