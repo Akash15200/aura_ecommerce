@@ -2,24 +2,25 @@ databases:
   - name: aura-db
     plan: free
 
-redis:
-  - name: aura-redis
-    plan: free
-    ipAllowList: [] # restict access only to services in this Render account
-
 services:
+  # ----------------------------------------------------
+  # 0. Redis Cache (Valkey)
+  # ----------------------------------------------------
+  - type: keyvalue
+    name: aura-redis
+    plan: free
+    ipAllowList: [] # restrict access only to services in this Render account
+
   # ----------------------------------------------------
   # 1. Discovery Server (Eureka)
   # ----------------------------------------------------
   - type: web
     name: aura-discovery-server
-    runtime: java
+    env: docker
     plan: free
-    buildCommand: mvn clean package -DskipTests
-    startCommand: java -XX:TieredStopAtLevel=1 -Xmx384m -Xms64m -jar backend/discovery-server/target/discovery-server-0.0.1-SNAPSHOT.jar
+    dockerContext: backend
+    dockerfilePath: backend/discovery-server/Dockerfile
     envVars:
-      - key: JAVA_OPTS
-        value: -XX:TieredStopAtLevel=1 -Xmx384m -Xms64m
       - key: PORT
         value: 8761
 
@@ -28,13 +29,11 @@ services:
   # ----------------------------------------------------
   - type: web
     name: aura-api-gateway
-    runtime: java
+    env: docker
     plan: free
-    buildCommand: mvn clean package -DskipTests
-    startCommand: java -XX:TieredStopAtLevel=1 -Xmx384m -Xms64m -jar backend/api-gateway/target/api-gateway-0.0.1-SNAPSHOT.jar
+    dockerContext: backend
+    dockerfilePath: backend/api-gateway/Dockerfile
     envVars:
-      - key: JAVA_OPTS
-        value: -XX:TieredStopAtLevel=1 -Xmx384m -Xms64m
       - key: PORT
         value: 8080
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
@@ -53,13 +52,11 @@ services:
   # ----------------------------------------------------
   - type: web
     name: aura-auth-service
-    runtime: java
+    env: docker
     plan: free
-    buildCommand: mvn clean package -DskipTests
-    startCommand: java -XX:TieredStopAtLevel=1 -Xmx384m -Xms64m -jar backend/auth-service/target/auth-service-0.0.1-SNAPSHOT.jar
+    dockerContext: backend
+    dockerfilePath: backend/auth-service/Dockerfile
     envVars:
-      - key: JAVA_OPTS
-        value: -XX:TieredStopAtLevel=1 -Xmx384m -Xms64m
       - key: PORT
         value: 8081
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
@@ -104,13 +101,11 @@ services:
   # ----------------------------------------------------
   - type: web
     name: aura-product-service
-    runtime: java
+    env: docker
     plan: free
-    buildCommand: mvn clean package -DskipTests
-    startCommand: java -XX:TieredStopAtLevel=1 -Xmx384m -Xms64m -jar backend/product-service/target/product-service-0.0.1-SNAPSHOT.jar
+    dockerContext: backend
+    dockerfilePath: backend/product-service/Dockerfile
     envVars:
-      - key: JAVA_OPTS
-        value: -XX:TieredStopAtLevel=1 -Xmx384m -Xms64m
       - key: PORT
         value: 8082
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
@@ -153,13 +148,11 @@ services:
   # ----------------------------------------------------
   - type: web
     name: aura-order-service
-    runtime: java
+    env: docker
     plan: free
-    buildCommand: mvn clean package -DskipTests
-    startCommand: java -XX:TieredStopAtLevel=1 -Xmx384m -Xms64m -jar backend/order-service/target/order-service-0.0.1-SNAPSHOT.jar
+    dockerContext: backend
+    dockerfilePath: backend/order-service/Dockerfile
     envVars:
-      - key: JAVA_OPTS
-        value: -XX:TieredStopAtLevel=1 -Xmx384m -Xms64m
       - key: PORT
         value: 8083
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
@@ -202,13 +195,11 @@ services:
   # ----------------------------------------------------
   - type: web
     name: aura-review-service
-    runtime: java
+    env: docker
     plan: free
-    buildCommand: mvn clean package -DskipTests
-    startCommand: java -XX:TieredStopAtLevel=1 -Xmx384m -Xms64m -jar backend/review-service/target/review-service-0.0.1-SNAPSHOT.jar
+    dockerContext: backend
+    dockerfilePath: backend/review-service/Dockerfile
     envVars:
-      - key: JAVA_OPTS
-        value: -XX:TieredStopAtLevel=1 -Xmx384m -Xms64m
       - key: PORT
         value: 8085
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
@@ -223,13 +214,11 @@ services:
   # ----------------------------------------------------
   - type: web
     name: aura-recommendation-service
-    runtime: java
+    env: docker
     plan: free
-    buildCommand: mvn clean package -DskipTests
-    startCommand: java -XX:TieredStopAtLevel=1 -Xmx384m -Xms64m -jar backend/recommendation-service/target/recommendation-service-0.0.1-SNAPSHOT.jar
+    dockerContext: backend
+    dockerfilePath: backend/recommendation-service/Dockerfile
     envVars:
-      - key: JAVA_OPTS
-        value: -XX:TieredStopAtLevel=1 -Xmx384m -Xms64m
       - key: PORT
         value: 8086
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
@@ -244,13 +233,11 @@ services:
   # ----------------------------------------------------
   - type: web
     name: aura-analytics-service
-    runtime: java
+    env: docker
     plan: free
-    buildCommand: mvn clean package -DskipTests
-    startCommand: java -XX:TieredStopAtLevel=1 -Xmx384m -Xms64m -jar backend/analytics-service/target/analytics-service-0.0.1-SNAPSHOT.jar
+    dockerContext: backend
+    dockerfilePath: backend/analytics-service/Dockerfile
     envVars:
-      - key: JAVA_OPTS
-        value: -XX:TieredStopAtLevel=1 -Xmx384m -Xms64m
       - key: PORT
         value: 8088
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
