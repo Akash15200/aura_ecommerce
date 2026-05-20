@@ -1,0 +1,255 @@
+version: '3.8'
+
+services:
+  # --- STACK DATABASES & REGISTRIES ---
+  postgres:
+    image: postgres:15-alpine
+    container_name: aura-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: aura_user
+      POSTGRES_PASSWORD: aura_password_123
+      POSTGRES_DB: ecommerce
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - aura-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: aura-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - aura-network
+
+  mongodb:
+    image: mongo:6-jammy
+    container_name: aura-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - aura-network
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.1
+    container_name: aura-elasticsearch
+    ports:
+      - "9200:9200"
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    networks:
+      - aura-network
+
+  # --- EVENT CHANNELING BUS (KAFKA) ---
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    container_name: aura-zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - aura-network
+
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    container_name: aura-kafka
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - aura-network
+
+  # --- EUREKA DISCOVERY & ROUTING GATEWAYS ---
+  discovery-server:
+    build:
+      context: ./backend/discovery-server
+    container_name: aura-discovery-server
+    ports:
+      - "8761:8761"
+    networks:
+      - aura-network
+
+  api-gateway:
+    build:
+      context: ./backend/api-gateway
+    container_name: aura-api-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - discovery-server
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - SPRING_DATA_REDIS_HOST=redis
+    networks:
+      - aura-network
+
+  # --- CUSTOM SPRING BOOT MICROSERVICES ---
+  auth-service:
+    build:
+      context: ./backend/auth-service
+    container_name: aura-auth-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgres
+      - redis
+      - kafka
+      - discovery-server
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/ecommerce
+      - SPRING_DATA_REDIS_HOST=redis
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    networks:
+      - aura-network
+
+  product-service:
+    build:
+      context: ./backend/product-service
+    container_name: aura-product-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - postgres
+      - redis
+      - elasticsearch
+      - discovery-server
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/ecommerce
+      - SPRING_DATA_REDIS_HOST=redis
+      - SPRING_ELASTICSEARCH_URIS=http://elasticsearch:9200
+    networks:
+      - aura-network
+
+  order-service:
+    build:
+      context: ./backend/order-service
+    container_name: aura-order-service
+    ports:
+      - "8083:8083"
+    depends_on:
+      - postgres
+      - redis
+      - kafka
+      - discovery-server
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/ecommerce
+      - SPRING_DATA_REDIS_HOST=redis
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    networks:
+      - aura-network
+
+  payment-service:
+    build:
+      context: ./backend/payment-service
+    container_name: aura-payment-service
+    ports:
+      - "8084:8084"
+    depends_on:
+      - postgres
+      - kafka
+      - discovery-server
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/ecommerce
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    networks:
+      - aura-network
+
+  review-service:
+    build:
+      context: ./backend/review-service
+    container_name: aura-review-service
+    ports:
+      - "8085:8085"
+    depends_on:
+      - mongodb
+      - kafka
+      - discovery-server
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/ecommerce
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    networks:
+      - aura-network
+
+  recommendation-service:
+    build:
+      context: ./backend/recommendation-service
+    container_name: aura-recommendation-service
+    ports:
+      - "8086:8086"
+    depends_on:
+      - mongodb
+      - kafka
+      - discovery-server
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/ecommerce
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    networks:
+      - aura-network
+
+  notification-service:
+    build:
+      context: ./backend/notification-service
+    container_name: aura-notification-service
+    ports:
+      - "8087:8087"
+    depends_on:
+      - kafka
+      - discovery-server
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    networks:
+      - aura-network
+
+  analytics-service:
+    build:
+      context: ./backend/analytics-service
+    container_name: aura-analytics-service
+    ports:
+      - "8088:8088"
+    depends_on:
+      - mongodb
+      - kafka
+      - discovery-server
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/ecommerce
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    networks:
+      - aura-network
+
+networks:
+  aura-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
+  mongo_data:
+  es_data:

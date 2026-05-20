@@ -1,0 +1,197 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: aura
+---
+# 1. PostgreSQL DB Storage PVC
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+  namespace: aura
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+# 2. PostgreSQL DB Deployment & Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: aura
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+          ports:
+            - containerPort: 5432
+          environment:
+            - name: POSTGRES_DB
+              value: ecommerce
+            - name: POSTGRES_USER
+              value: aura_user
+            - name: POSTGRES_PASSWORD
+              value: aura_password_123
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-storage
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: postgres-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: aura
+spec:
+  ports:
+    - port: 5432
+  selector:
+    app: postgres
+---
+# 3. Redis Cache Deployment & Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  namespace: aura
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:7-alpine
+          ports:
+            - containerPort: 6379
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: aura
+spec:
+  ports:
+    - port: 6379
+  selector:
+    app: redis
+---
+# 4. Spring Boot API Deployment & Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: aura
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: aura-backend:latest
+          ports:
+            - containerPort: 8080
+          environment:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://postgres:5432/ecommerce
+            - name: SPRING_DATASOURCE_USERNAME
+              value: aura_user
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: aura_password_123
+            - name: SPRING_DATA_REDIS_HOST
+              value: redis
+            - name: SPRING_DATA_REDIS_PORT
+              value: "6379"
+            - name: JWT_SECRET
+              value: YXVyYV9zdXBlcl9zZWN1cmVfc2VjcmV0X2tleV90aGF0X2lzX2xvbmdfZW5vdWdoX2Zvcl9zaGEyNTY=
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: aura
+spec:
+  ports:
+    - port: 8080
+  selector:
+    app: backend
+---
+# 5. React Nginx Frontend Deployment & Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: aura
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: aura-frontend:latest
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: aura
+spec:
+  ports:
+    - port: 80
+  selector:
+    app: frontend
+---
+# 6. Ingress Gateway Router mapping aura.com
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: aura-ingress
+  namespace: aura
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: aura.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80
