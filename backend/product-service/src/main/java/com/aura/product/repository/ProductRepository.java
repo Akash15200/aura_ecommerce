@@ -12,4 +12,6 @@ import java.util.List;
 public interface ProductRepository extends JpaRepository<Product, Long> {
     Page<Product> findByCategoryId(Long categoryId, Pageable pageable);
     List<Product> findByTagsContaining(String tag);
+    Page<Product> findByPriceBetween(double minPrice, double maxPrice, Pageable pageable);
+    Page<Product> findByCategoryIdAndPriceBetween(Long categoryId, double minPrice, double maxPrice, Pageable pageable);
 }

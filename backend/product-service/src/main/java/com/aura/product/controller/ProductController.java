@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,14 +25,20 @@ public class ProductController {
     @GetMapping
     public ResponseEntity<Page<Product>> getAllProducts(
             @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        Pageable pageable = PageRequest.of(page, size);
-        if (categoryId != null) {
-            return ResponseEntity.ok(productService.getProductsByCategory(categoryId, pageable));
-        }
-        return ResponseEntity.ok(productService.getAllProducts(pageable));
+        double min = minPrice != null ? minPrice : 0.0;
+        double max = maxPrice != null ? maxPrice : 999999.0;
+        
+        Sort sort = Sort.by(Sort.Direction.fromString(sortDir), sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
+        
+        return ResponseEntity.ok(productService.getProducts(categoryId, min, max, pageable));
     }
 
     @GetMapping("/{id}")

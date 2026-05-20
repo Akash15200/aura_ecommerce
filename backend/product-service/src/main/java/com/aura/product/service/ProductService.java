@@ -39,6 +39,13 @@ public class ProductService {
         return productRepository.findByCategoryId(categoryId, pageable);
     }
 
+    public Page<Product> getProducts(Long categoryId, double minPrice, double maxPrice, Pageable pageable) {
+        if (categoryId != null) {
+            return productRepository.findByCategoryIdAndPriceBetween(categoryId, minPrice, maxPrice, pageable);
+        }
+        return productRepository.findByPriceBetween(minPrice, maxPrice, pageable);
+    }
+
     @Transactional
     @CacheEvict(value = "products", allEntries = true)
     public Product createProduct(Product product) {
