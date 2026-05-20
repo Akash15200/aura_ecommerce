@@ -35,12 +35,16 @@ services:
           property: hostport
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
         value: http://${DISCOVERY_HOSTPORT}/eureka/
+      - key: EUREKA_INSTANCE_PREFER_IP_ADDRESS
+        value: "false"
+      - key: EUREKA_INSTANCE_HOSTNAME
+        value: ${RENDER_SERVICE_NAME}
       - key: SPRING_DATA_REDIS_HOST
-        sync: false # Prompts user for Upstash Redis host
+        sync: false
       - key: SPRING_DATA_REDIS_PORT
-        sync: false # Prompts user for Upstash Redis port
+        sync: false
       - key: SPRING_DATA_REDIS_PASSWORD
-        sync: false # Prompts user for Upstash Redis password
+        sync: false
 
   # ----------------------------------------------------
   # 3. Auth Service
@@ -61,6 +65,10 @@ services:
           property: hostport
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
         value: http://${DISCOVERY_HOSTPORT}/eureka/
+      - key: EUREKA_INSTANCE_PREFER_IP_ADDRESS
+        value: "false"
+      - key: EUREKA_INSTANCE_HOSTNAME
+        value: ${RENDER_SERVICE_NAME}
       - key: DATABASE_HOST
         fromDatabase:
           name: aura-db
@@ -90,7 +98,7 @@ services:
       - key: SPRING_DATA_REDIS_PASSWORD
         sync: false
       - key: SPRING_KAFKA_BOOTSTRAP_SERVERS
-        sync: false # Prompts user for Upstash/Cloud Kafka bootstrap servers
+        sync: false
       - key: JWT_SECRET
         value: YXVyYV9zdXBlcl9zZWN1cmVfc2VjcmV0X2tleV90aGF0X2lzX2xvbmdfZW5vdWdoX2Zvcl9zaGEyNTY=
 
@@ -113,6 +121,10 @@ services:
           property: hostport
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
         value: http://${DISCOVERY_HOSTPORT}/eureka/
+      - key: EUREKA_INSTANCE_PREFER_IP_ADDRESS
+        value: "false"
+      - key: EUREKA_INSTANCE_HOSTNAME
+        value: ${RENDER_SERVICE_NAME}
       - key: DATABASE_HOST
         fromDatabase:
           name: aura-db
@@ -142,7 +154,7 @@ services:
       - key: SPRING_DATA_REDIS_PASSWORD
         sync: false
       - key: SPRING_ELASTICSEARCH_URIS
-        sync: false # Prompts user for Bonsai/Elasticsearch cloud URL
+        sync: false
 
   # ----------------------------------------------------
   # 5. Order Service
@@ -163,6 +175,10 @@ services:
           property: hostport
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
         value: http://${DISCOVERY_HOSTPORT}/eureka/
+      - key: EUREKA_INSTANCE_PREFER_IP_ADDRESS
+        value: "false"
+      - key: EUREKA_INSTANCE_HOSTNAME
+        value: ${RENDER_SERVICE_NAME}
       - key: DATABASE_HOST
         fromDatabase:
           name: aura-db
@@ -192,7 +208,7 @@ services:
       - key: SPRING_DATA_REDIS_PASSWORD
         sync: false
       - key: SPRING_KAFKA_BOOTSTRAP_SERVERS
-        sync: false # Prompts user for Kafka bootstrap servers
+        sync: false
 
   # ----------------------------------------------------
   # 6. Review Service
@@ -213,10 +229,14 @@ services:
           property: hostport
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
         value: http://${DISCOVERY_HOSTPORT}/eureka/
+      - key: EUREKA_INSTANCE_PREFER_IP_ADDRESS
+        value: "false"
+      - key: EUREKA_INSTANCE_HOSTNAME
+        value: ${RENDER_SERVICE_NAME}
       - key: SPRING_KAFKA_BOOTSTRAP_SERVERS
-        sync: false # Prompts user for Upstash/Cloud Kafka bootstrap servers
+        sync: false
       - key: SPRING_DATA_MONGODB_URI
-        sync: false # Prompts user for MongoDB connection URI (e.g. MongoDB Atlas)
+        sync: false
 
   # ----------------------------------------------------
   # 7. Recommendation Service
@@ -237,6 +257,10 @@ services:
           property: hostport
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
         value: http://${DISCOVERY_HOSTPORT}/eureka/
+      - key: EUREKA_INSTANCE_PREFER_IP_ADDRESS
+        value: "false"
+      - key: EUREKA_INSTANCE_HOSTNAME
+        value: ${RENDER_SERVICE_NAME}
       - key: SPRING_KAFKA_BOOTSTRAP_SERVERS
         sync: false
       - key: SPRING_DATA_MONGODB_URI
@@ -261,6 +285,10 @@ services:
           property: hostport
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
         value: http://${DISCOVERY_HOSTPORT}/eureka/
+      - key: EUREKA_INSTANCE_PREFER_IP_ADDRESS
+        value: "false"
+      - key: EUREKA_INSTANCE_HOSTNAME
+        value: ${RENDER_SERVICE_NAME}
       - key: SPRING_KAFKA_BOOTSTRAP_SERVERS
         sync: false
       - key: SPRING_DATA_MONGODB_URI
