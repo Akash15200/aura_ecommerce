@@ -28,8 +28,13 @@ services:
     envVars:
       - key: PORT
         value: 8080
+      - key: DISCOVERY_HOSTPORT
+        fromService:
+          type: web
+          name: aura-discovery-server
+          property: hostport
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
-        value: https://aura-discovery-server.onrender.com/eureka/
+        value: http://${DISCOVERY_HOSTPORT}/eureka/
       - key: SPRING_DATA_REDIS_HOST
         sync: false # Prompts user for Upstash Redis host
       - key: SPRING_DATA_REDIS_PORT
@@ -49,8 +54,13 @@ services:
     envVars:
       - key: PORT
         value: 8081
+      - key: DISCOVERY_HOSTPORT
+        fromService:
+          type: web
+          name: aura-discovery-server
+          property: hostport
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
-        value: https://aura-discovery-server.onrender.com/eureka/
+        value: http://${DISCOVERY_HOSTPORT}/eureka/
       - key: DATABASE_HOST
         fromDatabase:
           name: aura-db
@@ -96,8 +106,13 @@ services:
     envVars:
       - key: PORT
         value: 8082
+      - key: DISCOVERY_HOSTPORT
+        fromService:
+          type: web
+          name: aura-discovery-server
+          property: hostport
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
-        value: https://aura-discovery-server.onrender.com/eureka/
+        value: http://${DISCOVERY_HOSTPORT}/eureka/
       - key: DATABASE_HOST
         fromDatabase:
           name: aura-db
@@ -141,8 +156,13 @@ services:
     envVars:
       - key: PORT
         value: 8083
+      - key: DISCOVERY_HOSTPORT
+        fromService:
+          type: web
+          name: aura-discovery-server
+          property: hostport
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
-        value: https://aura-discovery-server.onrender.com/eureka/
+        value: http://${DISCOVERY_HOSTPORT}/eureka/
       - key: DATABASE_HOST
         fromDatabase:
           name: aura-db
@@ -186,8 +206,13 @@ services:
     envVars:
       - key: PORT
         value: 8085
+      - key: DISCOVERY_HOSTPORT
+        fromService:
+          type: web
+          name: aura-discovery-server
+          property: hostport
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
-        value: https://aura-discovery-server.onrender.com/eureka/
+        value: http://${DISCOVERY_HOSTPORT}/eureka/
       - key: SPRING_KAFKA_BOOTSTRAP_SERVERS
         sync: false # Prompts user for Upstash/Cloud Kafka bootstrap servers
       - key: SPRING_DATA_MONGODB_URI
@@ -205,8 +230,13 @@ services:
     envVars:
       - key: PORT
         value: 8086
+      - key: DISCOVERY_HOSTPORT
+        fromService:
+          type: web
+          name: aura-discovery-server
+          property: hostport
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
-        value: https://aura-discovery-server.onrender.com/eureka/
+        value: http://${DISCOVERY_HOSTPORT}/eureka/
       - key: SPRING_KAFKA_BOOTSTRAP_SERVERS
         sync: false
       - key: SPRING_DATA_MONGODB_URI
@@ -224,8 +254,13 @@ services:
     envVars:
       - key: PORT
         value: 8088
+      - key: DISCOVERY_HOSTPORT
+        fromService:
+          type: web
+          name: aura-discovery-server
+          property: hostport
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
-        value: https://aura-discovery-server.onrender.com/eureka/
+        value: http://${DISCOVERY_HOSTPORT}/eureka/
       - key: SPRING_KAFKA_BOOTSTRAP_SERVERS
         sync: false
       - key: SPRING_DATA_MONGODB_URI
