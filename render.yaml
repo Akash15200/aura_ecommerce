@@ -196,3 +196,66 @@ services:
           property: port
       - key: SPRING_KAFKA_BOOTSTRAP_SERVERS
         sync: false # Prompts user for Kafka bootstrap servers
+
+  # ----------------------------------------------------
+  # 6. Review Service
+  # ----------------------------------------------------
+  - type: web
+    name: aura-review-service
+    runtime: java
+    plan: free
+    buildCommand: mvn clean package -DskipTests
+    startCommand: java -XX:TieredStopAtLevel=1 -Xmx384m -Xms64m -jar backend/review-service/target/review-service-0.0.1-SNAPSHOT.jar
+    envVars:
+      - key: JAVA_OPTS
+        value: -XX:TieredStopAtLevel=1 -Xmx384m -Xms64m
+      - key: PORT
+        value: 8085
+      - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+        value: https://aura-discovery-server.onrender.com/eureka/
+      - key: SPRING_KAFKA_BOOTSTRAP_SERVERS
+        sync: false # Prompts user for Upstash/Cloud Kafka bootstrap servers
+      - key: SPRING_DATA_MONGODB_URI
+        sync: false # Prompts user for MongoDB connection URI (e.g. MongoDB Atlas)
+
+  # ----------------------------------------------------
+  # 7. Recommendation Service
+  # ----------------------------------------------------
+  - type: web
+    name: aura-recommendation-service
+    runtime: java
+    plan: free
+    buildCommand: mvn clean package -DskipTests
+    startCommand: java -XX:TieredStopAtLevel=1 -Xmx384m -Xms64m -jar backend/recommendation-service/target/recommendation-service-0.0.1-SNAPSHOT.jar
+    envVars:
+      - key: JAVA_OPTS
+        value: -XX:TieredStopAtLevel=1 -Xmx384m -Xms64m
+      - key: PORT
+        value: 8086
+      - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+        value: https://aura-discovery-server.onrender.com/eureka/
+      - key: SPRING_KAFKA_BOOTSTRAP_SERVERS
+        sync: false
+      - key: SPRING_DATA_MONGODB_URI
+        sync: false
+
+  # ----------------------------------------------------
+  # 8. Analytics Service
+  # ----------------------------------------------------
+  - type: web
+    name: aura-analytics-service
+    runtime: java
+    plan: free
+    buildCommand: mvn clean package -DskipTests
+    startCommand: java -XX:TieredStopAtLevel=1 -Xmx384m -Xms64m -jar backend/analytics-service/target/analytics-service-0.0.1-SNAPSHOT.jar
+    envVars:
+      - key: JAVA_OPTS
+        value: -XX:TieredStopAtLevel=1 -Xmx384m -Xms64m
+      - key: PORT
+        value: 8088
+      - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+        value: https://aura-discovery-server.onrender.com/eureka/
+      - key: SPRING_KAFKA_BOOTSTRAP_SERVERS
+        sync: false
+      - key: SPRING_DATA_MONGODB_URI
+        sync: false
