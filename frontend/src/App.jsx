@@ -5,6 +5,7 @@ import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
 import { CompareProvider } from './context/CompareContext';
 import { LanguageCurrencyProvider } from './context/LanguageCurrencyContext';
+import { ThemeProvider } from './context/ThemeContext';
 
 // Core UI Components
 import { Navbar } from './components/Navbar';
@@ -44,15 +45,16 @@ export const App = () => {
 
   return (
     <Router>
-      <LanguageCurrencyProvider>
-        <AuthProvider>
-          <CartProvider>
-            <WishlistProvider>
-              <CompareProvider>
-                
-                {/* Main Client Shell */}
-                <div className="flex min-h-screen flex-col bg-aura-bg text-gray-200">
-                  <Navbar />
+      <ThemeProvider>
+        <LanguageCurrencyProvider>
+          <AuthProvider>
+            <CartProvider>
+              <WishlistProvider>
+                <CompareProvider>
+                  
+                  {/* Main Client Shell */}
+                  <div className="flex min-h-screen flex-col bg-aura-bg text-gray-200 transition-colors duration-300">
+                    <Navbar />
                   
                   {/* Floating slide drawers */}
                   <CartDrawer />
@@ -116,11 +118,12 @@ export const App = () => {
                   <Footer />
                 </div>
 
-              </CompareProvider>
-            </WishlistProvider>
-          </CartProvider>
-        </AuthProvider>
-      </LanguageCurrencyProvider>
+                </CompareProvider>
+              </WishlistProvider>
+            </CartProvider>
+          </AuthProvider>
+        </LanguageCurrencyProvider>
+      </ThemeProvider>
     </Router>
   );
 };

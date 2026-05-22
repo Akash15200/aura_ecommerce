@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import API from '../services/api';
+import API, { mockUpdateLoyaltyPoints } from '../services/api';
 
 const AuthContext = createContext();
 
@@ -90,6 +90,7 @@ export const AuthProvider = ({ children }) => {
       const updated = { ...user, loyaltyPoints: points };
       localStorage.setItem('user', JSON.stringify(updated));
       setUser(updated);
+      mockUpdateLoyaltyPoints(user.email, points);
     }
   };
 

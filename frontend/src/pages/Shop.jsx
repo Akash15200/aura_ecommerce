@@ -19,7 +19,7 @@ export const Shop = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isSemantic, setIsSemantic] = useState(false); // AI Semantic Search Toggle!
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('categoryId') || '');
-  const [priceRange, setPriceRange] = useState({ min: 0, max: 500 });
+  const [priceRange, setPriceRange] = useState({ min: 0, max: 2000 });
   const [sortBy, setSortBy] = useState('id');
   const [sortDir, setSortDir] = useState('asc');
 
@@ -65,7 +65,7 @@ export const Shop = () => {
           let url = `/products?page=${page}&size=6&sortBy=${sortBy}&sortDir=${sortDir}`;
           if (selectedCategory) url += `&categoryId=${selectedCategory}`;
           if (priceRange.min > 0) url += `&minPrice=${priceRange.min}`;
-          if (priceRange.max < 500) url += `&maxPrice=${priceRange.max}`;
+          if (priceRange.max < 2000) url += `&maxPrice=${priceRange.max}`;
           
           const res = await API.get(url);
           setProducts(res.data.content);
@@ -92,7 +92,7 @@ export const Shop = () => {
     setSelectedCategory('');
     setSearchQuery('');
     setIsSemantic(false);
-    setPriceRange({ min: 0, max: 500 });
+    setPriceRange({ min: 0, max: 2000 });
     setPage(0);
     setSearchParams({});
   };
@@ -213,8 +213,8 @@ export const Shop = () => {
             <input
               type="range"
               min="0"
-              max="500"
-              step="10"
+              max="2000"
+              step="20"
               value={priceRange.max}
               onChange={(e) => {
                 setPriceRange({ ...priceRange, max: parseFloat(e.target.value) });

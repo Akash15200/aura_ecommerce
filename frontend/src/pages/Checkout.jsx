@@ -418,14 +418,52 @@ export const Checkout = () => {
 
             {/* Download PDF button connecting directly to the Spring Boot endpoint! */}
             <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
-              <a
-                href={`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api'}/orders/${completedOrder.id}/invoice`}
-                download
-                className="flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-xs font-bold text-black hover:bg-gray-200 transition-colors shadow-lg"
+              <button
+                onClick={() => {
+                  const content = `
+==============================================
+            AURA LUXURY E-COMMERCE
+               RECEIPT INVOICE
+==============================================
+Order ID: #${completedOrder.id}
+Date: ${new Date(completedOrder.orderDate).toLocaleString()}
+Status: ${completedOrder.status}
+Shipping Tracker: ${completedOrder.trackingNumber}
+
+Shipping Address:
+${completedOrder.shippingAddress}
+
+Billing Address:
+${completedOrder.billingAddress}
+
+----------------------------------------------
+Items Ordered:
+${completedOrder.orderItems.map(item => `- ${item.product.name} x${item.quantity}  (${(item.price * item.quantity).toFixed(2)})`).join('\n')}
+
+----------------------------------------------
+Subtotal: $${completedOrder.subtotal.toFixed(2)}
+Discount: -$${completedOrder.discountAmount.toFixed(2)}
+Tax (10%): $${completedOrder.taxAmount.toFixed(2)}
+Grand Total: $${completedOrder.finalAmount.toFixed(2)}
+
+==============================================
+       Thank you for choosing curation.
+==============================================
+`;
+                  const blob = new Blob([content], { type: 'text/plain' });
+                  const url = URL.createObjectURL(blob);
+                  const link = document.createElement('a');
+                  link.href = url;
+                  link.download = `aura-invoice-${completedOrder.id}.txt`;
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                }}
+                className="flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-xs font-bold text-black hover:bg-gray-200 transition-colors shadow-lg cursor-pointer"
               >
                 <Download className="h-4 w-4" />
-                <span>DOWNLOAD PDF INVOICE RECEIPT</span>
-              </a>
+                <span>DOWNLOAD INVOICE RECEIPT</span>
+              </button>
 
               <Link
                 to="/dashboard"

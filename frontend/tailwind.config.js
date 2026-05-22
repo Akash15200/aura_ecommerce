@@ -9,9 +9,9 @@ export default {
     extend: {
       colors: {
         aura: {
-          bg: '#050508',
-          card: 'rgba(15, 15, 25, 0.7)',
-          border: 'rgba(255, 255, 255, 0.08)',
+          bg: 'var(--bg-color)',
+          card: 'var(--card-bg)',
+          border: 'var(--border-color-thick)',
           primary: '#8b5cf6', // Electric Violet
           secondary: '#a78bfa', // Light Lavender
           accent: '#10b981', // Neon Emerald

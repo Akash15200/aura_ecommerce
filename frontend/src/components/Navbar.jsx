@@ -5,7 +5,8 @@ import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { useCompare } from '../context/CompareContext';
 import { useLanguageCurrency } from '../context/LanguageCurrencyContext';
-import { ShoppingCart, Heart, RefreshCw, User, LogOut, Shield, Menu, X, Star, Globe, DollarSign } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
+import { ShoppingCart, Heart, RefreshCw, User, LogOut, Shield, Menu, X, Star, Globe, DollarSign, Sun, Moon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export const Navbar = () => {
@@ -14,6 +15,7 @@ export const Navbar = () => {
   const { setIsWishlistOpen, wishlistItems } = useWishlist();
   const { compareItems } = useCompare();
   const { language, setLanguage, currency, setCurrency, t } = useLanguageCurrency();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -81,6 +83,19 @@ export const Navbar = () => {
                 </select>
               </div>
             </div>
+
+            {/* Theme Toggle Button */}
+            <button
+              onClick={toggleTheme}
+              className="rounded-lg p-2 text-gray-400 hover:bg-white/5 hover:text-white transition-colors"
+              aria-label="Toggle Theme"
+            >
+              {theme === 'dark' ? (
+                <Sun className="h-5 w-5 text-amber-400 hover:text-amber-300 transition-colors" />
+              ) : (
+                <Moon className="h-5 w-5 text-slate-700 hover:text-slate-900 transition-colors" />
+              )}
+            </button>
 
             {/* Wishlist Toggle Button */}
             <button 
@@ -185,6 +200,19 @@ export const Navbar = () => {
 
           {/* Hamburger Mobile Toggle */}
           <div className="flex md:hidden items-center gap-4">
+            {/* Theme Toggle Button */}
+            <button
+              onClick={toggleTheme}
+              className="rounded-lg p-2 text-gray-400 hover:bg-white/5 hover:text-white transition-colors"
+              aria-label="Toggle Theme"
+            >
+              {theme === 'dark' ? (
+                <Sun className="h-5 w-5 text-amber-400" />
+              ) : (
+                <Moon className="h-5 w-5 text-slate-700" />
+              )}
+            </button>
+
             <button
               onClick={() => setIsCartOpen(true)}
               className="relative rounded-lg p-2 text-gray-400"
@@ -253,6 +281,19 @@ export const Navbar = () => {
                   <option value="EUR" className="bg-[#0f0f19]">EUR</option>
                   <option value="INR" className="bg-[#0f0f19]">INR</option>
                 </select>
+
+                {/* Mobile Drawer Theme Toggle Icon */}
+                <button
+                  onClick={toggleTheme}
+                  className="ml-auto rounded-lg p-1.5 text-gray-400 hover:bg-white/5 hover:text-white transition-colors"
+                  aria-label="Toggle Theme"
+                >
+                  {theme === 'dark' ? (
+                    <Sun className="h-4 w-4 text-amber-400" />
+                  ) : (
+                    <Moon className="h-4 w-4 text-slate-700" />
+                  )}
+                </button>
               </div>
 
               {user ? (

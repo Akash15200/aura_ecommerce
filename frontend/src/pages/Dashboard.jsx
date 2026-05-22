@@ -125,14 +125,52 @@ export const Dashboard = () => {
                       <span className="text-sm font-black text-white">{formatPrice(order.finalAmount)}</span>
                       
                       {/* PDF Invoice receipt download */}
-                      <a
-                        href={`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api'}/orders/${order.id}/invoice`}
-                        download
-                        className="flex items-center gap-1 rounded-xl bg-white/5 border border-white/10 px-3 py-1.5 text-[10px] font-bold text-gray-300 hover:bg-white/10 hover:text-white"
+                      <button
+                        onClick={() => {
+                          const content = `
+==============================================
+            AURA LUXURY E-COMMERCE
+               RECEIPT INVOICE
+==============================================
+Order ID: #${order.id}
+Date: ${new Date(order.orderDate).toLocaleString()}
+Status: ${order.status}
+Shipping Tracker: ${order.trackingNumber}
+
+Shipping Address:
+${order.shippingAddress}
+
+Billing Address:
+${order.billingAddress}
+
+----------------------------------------------
+Items Ordered:
+${order.orderItems.map(item => `- ${item.product.name} x${item.quantity}  (${(item.price * item.quantity).toFixed(2)})`).join('\n')}
+
+----------------------------------------------
+Subtotal: $${order.subtotal.toFixed(2)}
+Discount: -$${order.discountAmount.toFixed(2)}
+Tax (10%): $${order.taxAmount.toFixed(2)}
+Grand Total: $${order.finalAmount.toFixed(2)}
+
+==============================================
+       Thank you for choosing curation.
+==============================================
+`;
+                          const blob = new Blob([content], { type: 'text/plain' });
+                          const url = URL.createObjectURL(blob);
+                          const link = document.createElement('a');
+                          link.href = url;
+                          link.download = `aura-invoice-${order.id}.txt`;
+                          document.body.appendChild(link);
+                          link.click();
+                          document.body.removeChild(link);
+                        }}
+                        className="flex items-center gap-1 rounded-xl bg-white/5 border border-white/10 px-3 py-1.5 text-[10px] font-bold text-gray-300 hover:bg-white/10 hover:text-white cursor-pointer"
                       >
                         <Download className="h-3 w-3" />
-                        <span>RECEIPT PDF</span>
-                      </a>
+                        <span>RECEIPT</span>
+                      </button>
                     </div>
                   </div>
 

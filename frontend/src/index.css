@@ -2,10 +2,49 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  /* Dark theme values (default) */
+  --bg-color: #050508;
+  --text-color: #f3f4f6;
+  --text-color-secondary: #d1d5db; /* gray-300 */
+  --text-muted: #9ca3af; /* gray-400 */
+  --text-deep-muted: #6b7280; /* gray-500 */
+  --border-color: rgba(255, 255, 255, 0.05); /* white/5 */
+  --border-color-thick: rgba(255, 255, 255, 0.1); /* white/10 */
+  --card-bg: rgba(15, 15, 25, 0.7);
+  --input-bg: rgba(16, 16, 23, 0.8);
+  --dropdown-bg: #101017;
+  --footer-bg: #030305;
+  --white-overlay: rgba(255, 255, 255, 0.05);
+  --white-overlay-thin: rgba(255, 255, 255, 0.03);
+  --white-overlay-thick: rgba(255, 255, 255, 0.1);
+  --shadow-color: rgba(0, 0, 0, 0.37);
+}
+
+.light {
+  /* Light theme values */
+  --bg-color: #f8fafc; /* slate-50 */
+  --text-color: #0f172a; /* slate-900 */
+  --text-color-secondary: #334155; /* slate-700 */
+  --text-muted: #475569; /* slate-600 */
+  --text-deep-muted: #64748b; /* slate-500 */
+  --border-color: rgba(15, 23, 42, 0.06); /* slate-900/6% */
+  --border-color-thick: rgba(15, 23, 42, 0.12); /* slate-900/12% */
+  --card-bg: rgba(255, 255, 255, 0.7); /* glass-panel background */
+  --input-bg: #f1f5f9; /* slate-100 */
+  --dropdown-bg: #ffffff;
+  --footer-bg: #f1f5f9; /* slate-100 */
+  --white-overlay: rgba(15, 23, 42, 0.04);
+  --white-overlay-thin: rgba(15, 23, 42, 0.02);
+  --white-overlay-thick: rgba(15, 23, 42, 0.08);
+  --shadow-color: rgba(15, 23, 42, 0.05);
+}
+
 @layer base {
   body {
-    background-color: #050508;
-    color: #f3f4f6;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 }
 
@@ -115,3 +154,185 @@
   animation: shimmer 2s infinite;
   content: '';
 }
+
+/* Light mode overrides for Tailwind color classes */
+.light {
+  color-scheme: light;
+}
+
+.light .glass-panel {
+  background: rgba(255, 255, 255, 0.75) !important;
+  border-color: var(--border-color-thick) !important;
+  box-shadow: 0 8px 32px 0 var(--shadow-color) !important;
+}
+
+.light .glass-panel-light {
+  background: rgba(255, 255, 255, 0.4) !important;
+  border-color: var(--border-color) !important;
+}
+
+.light .bg-aura-bg {
+  background-color: var(--bg-color) !important;
+}
+
+.light .bg-aura-bg\/80 {
+  background-color: rgba(248, 250, 252, 0.8) !important;
+}
+
+.light .bg-aura-card\/95 {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+}
+
+.light .bg-aura-card\/30 {
+  background-color: rgba(15, 23, 42, 0.04) !important;
+}
+
+.light .bg-aura-card\/20 {
+  background-color: rgba(15, 23, 42, 0.03) !important;
+}
+
+.light .bg-aura-card\/15 {
+  background-color: rgba(15, 23, 42, 0.02) !important;
+}
+
+.light .bg-aura-card\/10 {
+  background-color: rgba(15, 23, 42, 0.01) !important;
+}
+
+.light .bg-aura-card {
+  background-color: var(--dropdown-bg) !important;
+  border-color: var(--border-color-thick) !important;
+}
+
+.light .text-white {
+  color: var(--text-color) !important;
+}
+
+.light .text-gray-100 {
+  color: var(--text-color) !important;
+}
+
+.light .text-gray-200 {
+  color: var(--text-color-secondary) !important;
+}
+
+.light .text-gray-300 {
+  color: var(--text-color-secondary) !important;
+}
+
+.light .text-gray-400 {
+  color: var(--text-muted) !important;
+}
+
+.light .text-gray-500 {
+  color: var(--text-deep-muted) !important;
+}
+
+.light .text-gray-600 {
+  color: var(--text-deep-muted) !important;
+}
+
+.light .border-white\/5 {
+  border-color: var(--border-color) !important;
+}
+
+.light .border-white\/10 {
+  border-color: var(--border-color-thick) !important;
+}
+
+.light .bg-white\/5 {
+  background-color: var(--white-overlay) !important;
+}
+
+.light .bg-white\/3 {
+  background-color: var(--white-overlay-thin) !important;
+}
+
+.light .bg-white\/10 {
+  background-color: var(--white-overlay-thick) !important;
+}
+
+.light .bg-\[\#09090f\] {
+  background-color: var(--input-bg) !important;
+}
+
+.light .bg-\[\#0a0a0f\] {
+  background-color: var(--dropdown-bg) !important;
+}
+
+.light .bg-\[\#0e0e15\]\/40 {
+  background-color: var(--white-overlay-thin) !important;
+}
+
+.light .bg-\[\#030305\] {
+  background-color: var(--footer-bg) !important;
+}
+
+.light .bg-\[\#101017\] {
+  background-color: var(--dropdown-bg) !important;
+}
+
+.light .bg-\[\#101017\]\/80 {
+  background-color: var(--input-bg) !important;
+}
+
+.light .bg-\[\#14141f\] {
+  background-color: var(--input-bg) !important;
+}
+
+.light .bg-\[\#0f0f19\] {
+  background-color: var(--dropdown-bg) !important;
+}
+
+.light .bg-black\/40 {
+  background-color: rgba(15, 23, 42, 0.05) !important;
+}
+
+.light .bg-black\/20 {
+  background-color: rgba(15, 23, 42, 0.02) !important;
+}
+
+.light .bg-black\/10 {
+  background-color: rgba(15, 23, 42, 0.02) !important;
+}
+
+.light .hover\:text-white:hover {
+  color: var(--text-color) !important;
+}
+
+.light .hover\:bg-white\/5:hover {
+  background-color: var(--white-overlay) !important;
+}
+
+.light .hover\:bg-white\/10:hover {
+  background-color: var(--white-overlay-thick) !important;
+}
+
+.light .hover\:bg-white\/3:hover {
+  background-color: var(--white-overlay-thin) !important;
+}
+
+.light .shadow-glass {
+  box-shadow: 0 8px 32px 0 var(--shadow-color) !important;
+}
+
+.light select option {
+  background-color: var(--dropdown-bg) !important;
+  color: var(--text-color) !important;
+}
+
+.light input::placeholder, 
+.light textarea::placeholder {
+  color: var(--text-deep-muted) !important;
+}
+
+.light input,
+.light textarea,
+.light select {
+  color: var(--text-color) !important;
+}
+
+.light .bg-gradient-to-r.from-aura-primary\/25.to-aura-secondary\/25 {
+  background-image: linear-gradient(to right, rgba(139, 92, 246, 0.1), rgba(167, 139, 250, 0.1)) !important;
+}
+
