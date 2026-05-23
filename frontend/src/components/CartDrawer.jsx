@@ -1,14 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useLanguageCurrency } from '../context/LanguageCurrencyContext';
 import { X, Trash2, Plus, Minus, ShoppingBag, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { isShopifyConfigured, createCheckout } from '../services/shopify';
 
 export const CartDrawer = () => {
   const { cartItems, isCartOpen, setIsCartOpen, updateQuantity, removeFromCart, subtotal } = useCart();
   const { formatPrice, t } = useLanguageCurrency();
   const navigate = useNavigate();
+  const [loadingCheckout, setLoadingCheckout] = useState(false);
 
   return (
     <AnimatePresence>
@@ -127,13 +129,32 @@ export const CartDrawer = () => {
                   </div>
 
                   <button
-                    onClick={() => {
-                      setIsCartOpen(false);
-                      navigate('/checkout');
+                    onClick={async () => {
+                      const shopifyActive = isShopifyConfigured();
+                      if (shopifyActive) {
+                        setLoadingCheckout(true);
+                        try {
+                          const checkoutUrl = await createCheckout(cartItems);
+                          if (checkoutUrl) {
+                            window.location.href = checkoutUrl;
+                          } else {
+                            alert('Failed to generate Shopify checkout URL.');
+                            setLoadingCheckout(false);
+                          }
+                        } catch (err) {
+                          console.error('Shopify checkout error:', err);
+                          alert('Error connecting to Shopify checkout: ' + err.message);
+                          setLoadingCheckout(false);
+                        }
+                      } else {
+                        setIsCartOpen(false);
+                        navigate('/checkout');
+                      }
                     }}
-                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-aura-primary to-aura-secondary py-3.5 text-xs font-bold text-white shadow-neon hover:opacity-90 active:scale-98 transition-all"
+                    disabled={loadingCheckout}
+                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-aura-primary to-aura-secondary py-3.5 text-xs font-bold text-white shadow-neon hover:opacity-90 active:scale-98 transition-all disabled:opacity-50"
                   >
-                    <span>{t('checkout')}</span>
+                    <span>{loadingCheckout ? 'REDIRECTING TO SHOPIFY...' : t('checkout')}</span>
                     <ArrowRight className="h-4 w-4" />
                   </button>
                 </div>

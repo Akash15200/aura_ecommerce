@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
@@ -6,6 +6,7 @@ import { useLanguageCurrency } from '../context/LanguageCurrencyContext';
 import API from '../services/api';
 import { CreditCard, ShoppingBag, Truck, Gift, CheckCircle, Download, ArrowRight, ArrowLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { isShopifyConfigured, createCheckout } from '../services/shopify';
 
 export const Checkout = () => {
   const { cartItems, subtotal, clearCart } = useCart();
@@ -31,6 +32,31 @@ export const Checkout = () => {
   const [completedOrder, setCompletedOrder] = useState(null);
   const [placingOrder, setPlacingOrder] = useState(false);
   const [orderError, setOrderError] = useState('');
+
+  useEffect(() => {
+    const handleShopifyRedirect = async () => {
+      if (isShopifyConfigured() && cartItems.length > 0) {
+        try {
+          const url = await createCheckout(cartItems);
+          if (url) {
+            window.location.href = url;
+          }
+        } catch (err) {
+          console.error("Shopify redirect failed:", err);
+        }
+      }
+    };
+    handleShopifyRedirect();
+  }, [cartItems]);
+
+  if (isShopifyConfigured() && cartItems.length > 0) {
+    return (
+      <div className="flex h-[60vh] flex-col items-center justify-center text-center text-gray-400">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-aura-primary border-t-transparent mb-4"></div>
+        <p className="text-sm font-semibold text-gray-200">Redirecting to secure Shopify checkout...</p>
+      </div>
+    );
+  }
 
   if (cartItems.length === 0 && step !== 3) {
     return (
